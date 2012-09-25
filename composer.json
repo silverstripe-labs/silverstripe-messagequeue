@@ -1,0 +1,19 @@
+{
+	"name": "silverstripe-labs/messagequeue ",
+	"description": "The MessageQueue module provides a simple, lightweight message
+		queueing mechanism  for SilverStripe applications. It can handle simple uses
+		such as queueing  actions for long running process execution, as well as
+		bi-directional  interaction with external messaging systems such as ApacheMQ.",
+	"type": "silverstripe-module",
+	"keywords": ["silverstripe-labs", "messagequeue", "development", "tools"],
+	"authors": [
+	{
+		"name": "Mark Stephens",
+		"email": "mark@silverstripe.com"
+	}
+	],
+	"require":
+	{
+		"silverstripe/framework": "2.4.*"
+	}
+}
