@@ -29,6 +29,10 @@ class MessageQueue
             )
         )
     );
+	
+    /**Optionally defined to 'true' via YML, this will stop MessageQueue_Process 
+    */processing in the background if set to true
+    private static $foreground_process = false;
 
     /**
      * An array of queues that need to be consumed after PHP shutdown. If
@@ -301,7 +305,11 @@ class MessageQueue
             switch (self::$onshutdown_option) {
                 case "sake":
                     $exec = Director::getAbsFile("framework/sake");
-                    `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr &`;
+		    if(Config::inst->get('MessageQueue', 'foreground_process')){
+	                    `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr`;
+		    } else {
+			    `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr &`;
+		    }
                     break;
                 case "phppath":
                     $php = self::$onshutdown_arg;
@@ -367,7 +375,11 @@ class MessageQueue
         switch (self::$onshutdown_option) {
             case "sake":
                 $exec = Director::getAbsFile("framework/sake");
-                `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr &`;
+                if(Config::inst->get('MessageQueue', 'foreground_process')){
+                        `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr`;
+                } else {
+                        `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr &`;
+                } 
                 break;
             case "phppath":
                 $php = self::$onshutdown_arg;
