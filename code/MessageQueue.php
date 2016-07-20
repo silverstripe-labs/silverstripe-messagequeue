@@ -29,9 +29,9 @@ class MessageQueue
             )
         )
     );
-	
+
     /**
-     *Optionally defined to 'true' via YML, this will stop MessageQueue_Process 
+     *Optionally defined to 'true' via YML, this will stop MessageQueue_Process
      *processing in the background if set to true
     */
     private static $foreground_process = false;
@@ -45,6 +45,20 @@ class MessageQueue
     protected static $queues_to_flush_on_shutdown = null;
 
     /**
+     *Decide whether or not to run the MessageQueue_Process in
+     *foreground or background
+    */
+    public static function MessageQueueProcess()
+    {
+        $exec = Director::getAbsFile("framework/sake");
+        if(Config::inst()->get('MessageQueue', 'foreground_process')){
+                `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr`;
+        } else {
+                `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr &`;
+        }
+    }
+
+    /**
      * Clears all interfaces with it's configuration and sets the interfaces
      * to an empty array.
      */
@@ -52,7 +66,7 @@ class MessageQueue
     {
         self::$interfaces = array();
     }
-    
+
     /**
      * Sets all interfaces with it's configuration. Existing interfaces will
      * be overwritten.
@@ -62,7 +76,7 @@ class MessageQueue
     {
         self::$interfaces = $config;
     }
-    
+
 
     /**
      * Add an interface with it's configuration. If there is already a
@@ -306,12 +320,7 @@ class MessageQueue
 
             switch (self::$onshutdown_option) {
                 case "sake":
-                    $exec = Director::getAbsFile("framework/sake");
-                    if(Config::inst()->get('MessageQueue', 'foreground_process')){
-                            `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr`;
-                    } else {
-                            `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr &`;
-                    }
+                    $this->MessageQueueProcess();
                     break;
                 case "phppath":
                     $php = self::$onshutdown_arg;
@@ -333,7 +342,7 @@ class MessageQueue
      * For a given queue, create a subprocess to send/consume messages on the queue as per the configuration
      * for the queue. This can be used in consume_on_shutdown, and can also be used by the message processor to
      * retrigger more messages.
-     * 
+     *
      * @todo This is copied directly from the code in consume_on_shutdown, which should be refactored to use this
      *       method once it's behaviour is verified.
      * @static
@@ -376,12 +385,13 @@ class MessageQueue
 
         switch (self::$onshutdown_option) {
             case "sake":
-                $exec = Director::getAbsFile("framework/sake");
-                if(Config::inst()->get('MessageQueue', 'foreground_process')){
-                        `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr`;
-                } else {
-                        `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr &`;
-                } 
+                //$exec = Director::getAbsFile("framework/sake");
+                // if(Config::inst()->get('MessageQueue', 'foreground_process')){
+                //         `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr`;
+                // } else {
+                //         `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr &`;
+                // }
+                $this->MessageQueueProcess();
                 break;
             case "phppath":
                 $php = self::$onshutdown_arg;
@@ -730,7 +740,7 @@ interface MessageExecutable
      * Execute the method. No result is returned. This should throw an
      * exception if there are problems, rather than use user_error which
      * cannot be caught (and bypasses error handling in the message engine).
-     * 
+     *
      * @param MessageFrame		The message frame, which provides access to the
      *							headers.
      * @param Map $config		The interface configuration that applied.
