@@ -48,7 +48,7 @@ class MessageQueue
      *Decide whether or not to run the MessageQueue_Process in
      *foreground or background
     */
-    public static function MessageQueueProcess()
+    public static function MessageQueueProcess($queue, $actions, $limitClause, $retriggerClause, $stdout, $stderr)
     {
         $exec = Director::getAbsFile("framework/sake");
         if(Config::inst()->get('MessageQueue', 'foreground_process')){
@@ -320,7 +320,7 @@ class MessageQueue
 
             switch (self::$onshutdown_option) {
                 case "sake":
-                    $this->MessageQueueProcess();
+                    self::MessageQueueProcess($queue, $actions, $limitClause, $retriggerClause, $stdout, $stderr);
                     break;
                 case "phppath":
                     $php = self::$onshutdown_arg;
@@ -385,7 +385,7 @@ class MessageQueue
 
         switch (self::$onshutdown_option) {
             case "sake":
-                $this->MessageQueueProcess();
+                self::MessageQueueProcess($queue, $actions, $limitClause, $retriggerClause, $stdout, $stderr);
                 break;
             case "phppath":
                 $php = self::$onshutdown_arg;
