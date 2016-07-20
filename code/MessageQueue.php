@@ -30,8 +30,10 @@ class MessageQueue
         )
     );
 	
-    /**Optionally defined to 'true' via YML, this will stop MessageQueue_Process 
-    processing in the background if set to true */
+    /**
+     *Optionally defined to 'true' via YML, this will stop MessageQueue_Process 
+     *processing in the background if set to true
+    */
     private static $foreground_process = false;
 
     /**
