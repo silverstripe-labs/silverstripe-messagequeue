@@ -306,10 +306,10 @@ class MessageQueue
                 case "sake":
                     $exec = Director::getAbsFile("framework/sake");
                     if(Config::inst()->get('MessageQueue', 'foreground_process')){
-	                    `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr`;
-		    } else {
-			    `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr &`;
-		    }
+                            `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr`;
+                    } else {
+                            `$exec MessageQueue_Process queue=$queue actions=$actions $limitClause $retriggerClause $stdout $stderr &`;
+                    }
                     break;
                 case "phppath":
                     $php = self::$onshutdown_arg;
